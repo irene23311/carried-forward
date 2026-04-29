@@ -82,18 +82,19 @@ function onScroll() {
   }
 
   /* ── Tahlequah journey path (Section 4) ──
-     SVG path draws itself as you scroll
-     through Section 4 */
+     SVG path draws itself as the journey map
+     enters the viewport */
   const jp = document.getElementById('jp');
-  const s4 = document.getElementById('s4');
-  if (jp && s4) {
-    const r = s4.getBoundingClientRect();
-    if (r.top < innerHeight * .65) {
-      const p = Math.max(0,
-        Math.min(1, (innerHeight * .65 - r.top) / (innerHeight * .6))
-      );
-      jp.style.strokeDashoffset = 1200 * (1 - p);
-    }
+  const jmap = document.querySelector('.jmap');
+  if (jp && jmap) {
+    const pathLength = jp.getTotalLength();
+    const r = jmap.getBoundingClientRect();
+    const start = innerHeight * .9;
+    const end = innerHeight * .38;
+    const p = Math.max(0, Math.min(1, (start - r.top) / (start - end)));
+
+    jp.style.strokeDasharray = pathLength;
+    jp.style.strokeDashoffset = pathLength * (1 - p);
   }
 }
 
