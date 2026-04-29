@@ -39,7 +39,7 @@
     <a href="#" class="n-logo">Carried Forward</a>
     <ul class="n-links">
       <li><a href="#s1" data-s="s1">Family</a></li>
-      <li><a href="#s2" data-s="s2">Rupture</a></li>
+      <li><a href="#s2" data-s="s2">Hunting</a></li>
       <li><a href="#s3" data-s="s3">Enclosure</a></li>
       <li><a href="#s4" data-s="s4">Grief</a></li>
       <li><a href="#s5" data-s="s5">Today</a></li>
@@ -104,7 +104,7 @@
       </div>
     </section>
 
-    <!-- ══ S2: RUPTURE ══ -->
+    <!-- ══ S2: HUNTING ══ -->
     <section class="sec" id="s2">
       <div class="sec-in">
 
@@ -116,7 +116,7 @@
           </h2>
           <p class="lead rv d2">
             Between 1961 and 1976, the Pacific Northwest became the primary
-            hunting ground for a new industry — capturing wild orcas for display.
+            hunting ground for a new industry, capturing wild orcas for display.
             The younger ones were cheapest to ship, easiest to condition.
           </p>
 
@@ -188,7 +188,7 @@
 
       </div>
     </section>
-
+    <section id="whale-stage"></section>
     <!-- ══ S3: ENCLOSURE ══ -->
     <section class="sec" id="s3">
       <div class="sec-in">
@@ -354,7 +354,7 @@
 
         <div class="pq rv d4" style="margin:2.5rem auto; text-align:left;">
           Grief exists beyond human language. She moved through the same water
-          her family had always moved through — but now it held something more:
+          her family had always moved through — but with something more:
           the weight of what could not be saved, and the refusal to let go.
         </div>
 
@@ -424,7 +424,7 @@
         </div>
 
         <div>
-          <p class="eyebrow rv" style="margin-top:0">Threats today</p>
+          <p class="eyebrow2 rv" style="margin-top:0">Threats today</p>
           <ul class="threats rv d1">
             <li>
               <span class="ic">◌</span>
@@ -526,8 +526,7 @@
         Whale &amp; Dolphin Conservation USA
       </p>
       <p style="margin-top:.8rem;">
-        An information design project about memory, grief, and the matrilineal
-        bonds of <em>Orcinus orca</em>.
+       Female Orca by neurodolphin on Sketchfab <em>Orcinus orca</em>.
       </p>
     </footer>
 
@@ -541,7 +540,11 @@
        3. scroll.js — calls setScrollProgress() on scroll
        4. viz.js    — cursor, dive, family tree, dot grid, count-up
   ════════════════════════════════════════ -->
-  
+  <script>
+  // Force page to top on every load — prevents browser scroll restoration
+  history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 

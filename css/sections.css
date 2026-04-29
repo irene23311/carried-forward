@@ -40,7 +40,7 @@
    /* S1 content starts invisible and locked */
 
     #whale-stage {
-  height: 300vh; 
+  height: 230vh; 
   pointer-events: none;}
 
 #s1.cinematic-hold .sec-in {

@@ -11,7 +11,7 @@ renderer.setClearColor(0x000000, 0);
 
 const scene = new THREE.Scene();
 const cam   = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 1000);
-cam.position.set(0, 1.2, 4);
+cam.position.set(0, .9, 4);
 cam.lookAt(0, 0, 0);
 
 function lerp(a, b, t) { return a + (b - a) * t; }
@@ -227,8 +227,10 @@ window.setScrollProgress = function(p) { targetP = p; };
 
 window.onDiveStart = function() {
   whaleFadeIn       = 0;
-  wGroup.visible    = true;
-  calfGroup.visible = true;
+  wGroup.visible    = false;
+  calfGroup.visible = false;
+  cam.position.set(0, 1.2, 4); // 👈 add this
+  cam.lookAt(0, 0, 0);
 };
 
 (function animLoop() {
@@ -259,55 +261,60 @@ window.onDiveStart = function() {
   scrollP = lerp(scrollP, targetP, .05);
   var s = scrollP;
 
+/* ── Gentle bob animation always running ── */
   wGroup.position.y    = Math.sin(t * .65) * .07;
   wGroup.rotation.z    = .06 + Math.sin(t * .45) * .02;
   calfGroup.position.y = -.38 + Math.sin(t * .7 + 1) * .05;
-  apM.opacity          = lerp(0, .18, Math.min(s * 8, 1)) * whaleFadeIn;
 
-  if (s < .14) {
-    var p = s / .14;
-    setWhaleOpacity(p * whaleFadeIn);
-    setCalfOpacity(p * .55 * whaleFadeIn);
-    cam.position.z       = lerp(5.5, 4.5, p);
-    wGroup.position.x    = Math.sin(t * .28) * .22;
-    calfGroup.position.x = 1.2 + Math.sin(t * .32 + 1) * .15;
-  } else if (s < .32) {
-    var p = (s - .14) / .18;
-    setWhaleOpacity(whaleFadeIn);
-    setCalfOpacity(.55 * (1 - p) * whaleFadeIn);
-    calfGroup.position.x = 1.2 + p * 5;
-    cam.position.z       = 4.5;
-    wGroup.position.x    = lerp(.22, -.2, p) * Math.sin(t * .28);
-  } else if (s < .5) {
-    var p = (s - .32) / .18;
-    setWhaleOpacity(lerp(1, .75, p) * whaleFadeIn);
+  /* ── S2→S3 transition window ── */
+  var SWIM_START = 0.455;
+  var SWIM_END   = 0.505;
+  var inTransition = (s >= SWIM_START && s <= SWIM_END);
+
+  if (inTransition) {
+    var p = (s - SWIM_START) / (SWIM_END - SWIM_START);
+
+    /* Diagonal path: top-right → bottom-left */
+    wGroup.position.x = lerp( 2.5, -2.5, p);
+    wGroup.position.y = lerp( 1.2, -1.2, p);
+    wGroup.position.z = 0;
+
+    /* Fade in first 20%, hold, fade out last 20% */
+    var opacity;
+    if      (p < 0.2) opacity = p / 0.2;
+    else if (p > 0.8) opacity = (1 - p) / 0.2;
+    else              opacity = 1;
+
+    wGroup.visible = true;
+    wGroup.scale.setScalar(1.8);
+    wGroup.rotation.y = Math.PI * 0.5 + 0.3;
+    wGroup.rotation.z = -0.08;
+    setWhaleOpacity(opacity);
     setCalfOpacity(0);
-    cam.position.z    = lerp(4.5, 3.8, p);
-    wGroup.rotation.y = lerp(Math.PI * .5, Math.PI * .5 + .4, p);
-    wGroup.position.x = lerp(0, -.15, p);
-  } else if (s < .68) {
-    var p = (s - .5) / .18;
-    setWhaleOpacity(lerp(.75, .85, Math.sin(t * 1.1) * .1 + .8) * whaleFadeIn);
-    cam.position.z    = 3.8;
-    wGroup.position.x = lerp(-.15, 0, p);
-    allMats.forEach(function(m) {
-      if (m && (m === edgesM || m === dEdgM))
-        m.opacity = (.85 + Math.sin(t * 1.5) * .12) * whaleFadeIn;
-    });
-  } else if (s < .85) {
-    var p = (s - .68) / .17;
-    setWhaleOpacity(lerp(.85, .8, p) * whaleFadeIn);
-    cam.position.z = lerp(3.8, 5, p);
-    wGroup.scale.setScalar(lerp(1.8, 1.65, p));
+
+    cam.position.set(0, 0, 4.5);
+
   } else {
-    var p = (s - .85) / .15;
-    setWhaleOpacity(lerp(.8, 1, p) * whaleFadeIn);
-    setCalfOpacity(p * .35 * whaleFadeIn);
-    calfGroup.position.x = lerp(6, 1.2, p);
-    calfGroup.position.y = lerp(-.38, -.1, p);
-    cam.position.z       = lerp(5, 5.5, p);
-    wGroup.scale.setScalar(lerp(1.65, 1.8, p));
+    /* Outside transition — completely hidden */
+    wGroup.visible = false;
+    setWhaleOpacity(0);
+    setCalfOpacity(0);
+    cam.position.set(0, 0, 4.5);
   }
+
+  /* ── Ghost calf in S4 grief section ── */
+  var inGrief = (s >= 0.59 && s <= 0.75);
+  calfGroup.visible = inGrief;
+  if (inGrief) {
+    var gp = (s - 0.59) / (0.75 - 0.59);
+    calfGroup.position.set(1.2, lerp(-0.38, -0.1, gp), 0.1);
+    setCalfOpacity(lerp(0, 0.35, Math.min(gp * 3, 1)));
+  }
+
+  /* ── Particles only during transition ── */
+  apM.opacity = inTransition
+    ? lerp(0, 0.18, Math.min((s - SWIM_START) / (SWIM_END - SWIM_START) * 5, 1))
+    : 0;
 
   renderer.render(scene, cam);
 })();
