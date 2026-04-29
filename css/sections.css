@@ -1,0 +1,321 @@
+/* ============================================================
+   sections.css — Per-section layout and component styles
+   Carried Forward: The Memory of Whales
+   ============================================================ */
+
+/* ── Section base ── */
+.sec {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 9rem 0 7rem;
+}
+.sec-in {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  width: 100%;
+}
+
+/* ── CTA buttons ── */
+.ctarow { display: flex; gap: 1.2rem; justify-content: center; margin-top: 3rem; flex-wrap: wrap; }
+.cta {
+  font-size: .62rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  padding: .9em 2.2em;
+  text-decoration: none;
+  border: 1px solid rgba(0,255,231,.3);
+  color: var(--cyan);
+  transition: .3s;
+}
+.cta:hover { background: var(--cyan); color: var(--black); box-shadow: 0 0 24px var(--cyan); }
+.cta.s { color: var(--faint); border-color: rgba(200,240,235,.1); }
+.cta.s:hover { background: rgba(200,240,235,.07); color: var(--white); box-shadow: none; }
+
+/* ════════════════════════════════════════
+   SECTION 1 — Family
+   ════════════════════════════════════════ */
+#s1 .sec-in {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+#s1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 65% 55% at 75% 50%, rgba(0,255,231,.04) 0%, transparent 70%);
+}
+
+/* Family tree container */
+.ftree { position: relative; height: 330px; }
+.ftree svg { width: 100%; height: 100%; overflow: visible; }
+
+/* ════════════════════════════════════════
+   SECTION 2 — Rupture
+   ════════════════════════════════════════ */
+#s2 .sec-in {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+#s2::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 55% 50% at 25% 50%, rgba(180,30,30,.05) 0%, transparent 70%);
+}
+
+/* Timeline */
+.tl {
+  border-left: 1px solid rgba(0,255,231,.18);
+  padding-left: 1.6rem;
+}
+.tl-item {
+  margin-bottom: 2.4rem;
+  position: relative;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity .5s, transform .5s;
+}
+.tl-item.on { opacity: 1; transform: none; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -1.95rem;
+  margin-top: .42rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.tl-yr {
+  font-size: .6rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: .35rem;
+}
+.tl-tx { font-size: .85rem; line-height: 1.75; color: var(--muted); }
+.tl-n  { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); }
+
+/* Dot grid */
+.dgrid { display: flex; flex-wrap: wrap; gap: 7px; max-width: 340px; margin: 2rem 0; }
+.dgrid .d {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: rgba(0,255,231,.07);
+  border: 1px solid rgba(0,255,231,.2);
+  transition: .3s;
+}
+.dgrid .d.tk { background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.dgrid .d.kl { background: var(--red); border-color: rgba(220,60,60,.4); box-shadow: 0 0 5px rgba(220,60,60,.4); }
+
+/* Dot legend */
+.dleg { display: flex; gap: 1.4rem; margin-top: .8rem; flex-wrap: wrap; }
+.dleg-i {
+  display: flex; align-items: center; gap: .45rem;
+  font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: var(--faint);
+}
+.dleg-d { width: 7px; height: 7px; border-radius: 50%; }
+
+/* ════════════════════════════════════════
+   SECTION 3 — Enclosure
+   ════════════════════════════════════════ */
+#s3 .sec-in {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 5rem;
+  align-items: center;
+}
+#s3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,255,231,.03) 0%, transparent 70%);
+}
+
+/* Lifespan bars */
+.lbars { margin: 2.2rem 0; }
+.lbar  { margin-bottom: 1.5rem; }
+.lbar-lbl {
+  display: flex;
+  justify-content: space-between;
+  font-size: .65rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: .45rem;
+}
+.lbar-tr { height: 1px; background: rgba(0,255,231,.08); }
+.lbar-fi {
+  height: 1px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  width: 0;
+  transition: width 1.5s cubic-bezier(.4,0,.2,1);
+}
+.lbar-fi.cap {
+  background: rgba(220,60,60,.75);
+  box-shadow: 0 0 6px rgba(220,60,60,.4);
+}
+
+/* ════════════════════════════════════════
+   SECTION 4 — Grief (Tahlequah)
+   ════════════════════════════════════════ */
+#s4 .sec-in {
+  max-width: 740px;
+  margin: 0 auto;
+  text-align: center;
+}
+#s4::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 55% at 50% 40%, rgba(0,255,231,.06) 0%, transparent 65%);
+}
+#s4 .rule  { margin: 0 auto 1.8rem; }
+#s4 .lead  { max-width: 100%; margin: 0 auto 2rem; }
+
+/* 2018 / 2024 diptych */
+.diptych {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(0,255,231,.09);
+  margin: 2.5rem 0;
+}
+.dp { background: var(--near); padding: 2.4rem; text-align: left; }
+.dp-yr {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  color: var(--cyan);
+  display: block;
+  line-height: 1;
+  margin-bottom: .9rem;
+  text-shadow: 0 0 30px var(--cyan-dim);
+}
+.dp-tx { font-size: .83rem; line-height: 1.85; color: var(--muted); }
+
+/* Journey map */
+.jmap { width: 100%; height: 220px; margin: 2.5rem 0; }
+.jmap svg { width: 100%; height: 100%; }
+
+/* Journey stats row */
+.jstats { display: flex; justify-content: center; gap: 4rem; margin: 1.5rem 0; }
+
+/* ════════════════════════════════════════
+   SECTION 5 — Today
+   ════════════════════════════════════════ */
+#s5 .sec-in {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+#s5::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 65% 55% at 30% 55%, rgba(0,255,231,.04) 0%, transparent 70%);
+}
+
+/* Pod population circles */
+.pods { display: flex; gap: 2.5rem; margin: 2.2rem 0; align-items: flex-end; }
+.pod-c { text-align: center; }
+.pod-cn {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  color: var(--white);
+  display: block;
+  line-height: 1;
+  margin-bottom: .2rem;
+  text-shadow: 0 0 14px var(--cyan-dim);
+}
+.pod-nm { font-size: .62rem; letter-spacing: .25em; text-transform: uppercase; color: var(--faint); }
+
+/* Threats list */
+.threats { list-style: none; margin: 1.8rem 0; }
+.threats li {
+  display: flex;
+  gap: 1rem;
+  padding: .85rem 0;
+  border-bottom: 1px solid rgba(0,255,231,.05);
+  font-size: .83rem;
+  color: var(--muted);
+  line-height: 1.6;
+  align-items: flex-start;
+}
+.threats .ic { color: var(--cyan); flex-shrink: 0; font-size: .85rem; margin-top: .05rem; }
+
+/* Ocean Sun box */
+.ocean-box {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(0,255,231,.1);
+  background: rgba(0,255,231,.022);
+}
+.ocean-box p { font-size: .78rem; line-height: 1.9; color: var(--muted); }
+
+/* ════════════════════════════════════════
+   SECTION 6 — Forward (Coda)
+   ════════════════════════════════════════ */
+#s6 .sec-in {
+  max-width: 660px;
+  margin: 0 auto;
+  text-align: center;
+}
+#s6::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 65% at 50% 50%, rgba(0,255,231,.07) 0%, transparent 60%);
+}
+#s6 .rule { margin: 0 auto 1.8rem; }
+#s6 .lead { max-width: 100%; margin: 0 auto 2rem; }
+
+.ocean-sun {
+  font-size: .72rem;
+  letter-spacing: .18em;
+  color: var(--faint);
+  line-height: 2.4;
+  font-style: italic;
+  margin: 2.8rem 0;
+}
+.ocean-sun strong { color: var(--muted); font-weight: 400; }
+
+/* ════════════════════════════════════════
+   SCROLL REVEAL
+   ════════════════════════════════════════ */
+.rv {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .85s ease, transform .85s ease;
+}
+.rv.on { opacity: 1; transform: none; }
+.d1 { transition-delay: .12s; }
+.d2 { transition-delay: .24s; }
+.d3 { transition-delay: .36s; }
+.d4 { transition-delay: .5s;  }
+
+/* ── Mobile overrides ── */
+@media (max-width: 768px) {
+  #s1 .sec-in,
+  #s2 .sec-in,
+  #s3 .sec-in,
+  #s5 .sec-in { grid-template-columns: 1fr; gap: 3rem; }
+  .diptych    { grid-template-columns: 1fr; }
+  .jstats     { gap: 2rem; flex-wrap: wrap; }
+}

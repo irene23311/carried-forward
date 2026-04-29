@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carried Forward — The Memory of Whales</title>
+
+  <!-- ── Stylesheets ── -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/sections.css">
+</head>
+<body class="intro-active">
+
+  <!-- ── Cursor ── -->
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <!-- ── Progress bar ── -->
+  <div id="prog"></div>
+
+  <!-- ── Three.js canvas (whale lives here) ── -->
+  <canvas id="tc"></canvas>
+
+  <!-- ── Intro screen ── -->
+  <div id="intro">
+    <div class="intro-copy">
+      <h1 class="i-title">Carried<br><em>Forward</em></h1>
+      <div class="i-rule"></div>
+      <p class="i-sub">
+        The matrilineal bonds of orca families, the grief of Tahlequah,
+        and what captivity took from the Southern Residents.
+      </p>
+      <button class="i-btn" id="enter-btn" type="button">Enter the deep</button>
+    </div>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav id="nav">
+    <a href="#" class="n-logo">Carried Forward</a>
+    <ul class="n-links">
+      <li><a href="#s1" data-s="s1">Family</a></li>
+      <li><a href="#s2" data-s="s2">Rupture</a></li>
+      <li><a href="#s3" data-s="s3">Enclosure</a></li>
+      <li><a href="#s4" data-s="s4">Grief</a></li>
+      <li><a href="#s5" data-s="s5">Today</a></li>
+      <li><a href="#s6" data-s="s6">Forward</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       STORY
+  ════════════════════════════════════════ -->
+  <div id="story">
+
+    <!-- ══ S1: FAMILY ══ -->
+    <section class="sec" id="s1">
+      <div class="sec-in">
+
+        <div>
+          <p class="eyebrow rv">Chapter One</p>
+          <div class="rule rv d1"></div>
+          <h2 class="rv d1">
+            The ones who live<br><em>beneath the sea</em>
+          </h2>
+          <p class="lead rv d2">
+            Orcas are matrilineal. They are born into names, into songs,into a mother who will never leave them. Children stay their entire lives. Daughters carry the lineage forward. A pod is not a group
+            — it is a family that never disperses.
+          </p>
+          <p class="body rv d3">
+            The Lummi Nation of the Pacific Northwest call them
+            <em>qwe lhol mechen</em> — the people who live beneath the sea.
+            Not metaphor. Recognition. The Southern Residents have moved
+            through these waters for thousands of years across three pods:
+            J, K, and L.
+          </p>
+          <div class="stats rv d3">
+            <div>
+              <span class="stat-n" data-count="4">0</span>
+              <span class="stat-l">Generations living together in one pod</span>
+            </div>
+            <div>
+              <span class="stat-n">90<small style="font-size:.45em">yr</small></span>
+              <span class="stat-l">Maximum lifespan, wild female</span>
+            </div>
+            <div>
+              <span class="stat-n" data-count="3">0</span>
+              <span class="stat-l">Pods in the Southern Resident community</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rv d2">
+          <!-- SVG is drawn by viz.js → buildFamilyTree() -->
+          <div class="ftree">
+            <svg id="ftsvg" viewBox="0 0 420 310" fill="none"></svg>
+          </div>
+          <p class="body" style="margin-top:1.4rem; font-size:.73rem;">
+            ↑ J17 matriline — Tahlequah's family. Nodes are named individuals.
+            Lines are mother–offspring bonds. Red = deceased.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ S2: RUPTURE ══ -->
+    <section class="sec" id="s2">
+      <div class="sec-in">
+
+        <div>
+          <p class="eyebrow rv">Chapter Two</p>
+          <div class="rule rv d1"></div>
+          <h2 class="rv d1">
+            The years they<br><em>came for the calves</em>
+          </h2>
+          <p class="lead rv d2">
+            Between 1961 and 1976, the Pacific Northwest became the primary
+            hunting ground for a new industry — capturing wild orcas for display.
+            The younger ones were cheapest to ship, easiest to condition.
+          </p>
+
+          <!-- Dot grid: built by viz.js → buildDotGrid() -->
+          <div class="rv d3">
+            <p style="font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:var(--cyan); margin-bottom:.75rem;">
+              Penn Cove, 1970 — 80 Southern Residents
+            </p>
+            <div class="dgrid" id="dgrid"></div>
+            <div class="dleg">
+              <div class="dleg-i">
+                <div class="dleg-d" style="background:rgba(0,255,231,.1); border:1px solid rgba(0,255,231,.25)"></div>
+                Free
+              </div>
+              <div class="dleg-i">
+                <div class="dleg-d" style="background:var(--cyan); box-shadow:0 0 6px var(--cyan)"></div>
+                Captured
+              </div>
+              <div class="dleg-i">
+                <div class="dleg-d" style="background:var(--red)"></div>
+                Killed in nets
+              </div>
+            </div>
+          </div>
+
+          <div class="stats rv d4" style="margin-top:2.2rem;">
+            <div>
+              <span class="stat-n">48</span>
+              <span class="stat-l">Southern Residents lost to captivity, 1962–77</span>
+            </div>
+            <div>
+              <span class="stat-n">0</span>
+              <span class="stat-l">Of those 48 alive today</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline: items animated by scroll.js -->
+        <div class="tl rv d2" id="tl">
+          <div class="tl-item">
+            <p class="tl-yr">1961</p>
+            <p class="tl-tx">Wanda, the first Pacific Northwest orca captured — sold to Marineland of the Pacific. The trade begins.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1965</p>
+            <p class="tl-tx">Shamu captured off Whidbey Island, sold to SeaWorld. A lineage becomes a logo.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1967</p>
+            <p class="tl-tx"><span class="tl-n">5</span> Southern Residents taken in 17 days. Three drown in the nets.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1970</p>
+            <p class="tl-tx">Penn Cove. <span class="tl-n">80+</span> orcas surrounded with speedboats, planes, explosives. Seven taken. At least five killed — carcasses secretly sunk to hide the count.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1972</p>
+            <p class="tl-tx">Marine Mammal Protection Act passed. SeaWorld exploits loopholes and continues capturing calves.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1976</p>
+            <p class="tl-tx">Budd Inlet, Olympia. A state official witnesses the operation, calls the governor. A judge rules against SeaWorld in two weeks. Pacific Northwest captures end.</p>
+          </div>
+          <div class="tl-item">
+            <p class="tl-yr">1976–1989</p>
+            <p class="tl-tx">Captures move to Iceland. <span class="tl-n">54</span> more taken. Tilikum and Keiko among them.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ S3: ENCLOSURE ══ -->
+    <section class="sec" id="s3">
+      <div class="sec-in">
+
+        <div>
+          <p class="eyebrow rv">Chapter Three</p>
+          <div class="rule rv d1"></div>
+          <h2 class="rv d1">
+            The ocean<br><em>becomes a dream</em>
+          </h2>
+          <p class="lead rv d2">
+            Corky was captured in 1969, age four, from the Northern Residents
+            near Vancouver Island. She has been at SeaWorld San Diego for over
+            fifty years. Her family — the A5 pod — still swims those same waters.
+            Her brother Fife is alive today.
+          </p>
+          <p class="body rv d3">
+            None of Corky's seven pregnancies produced a surviving calf. In the
+            wild, a calf stays with its mother for life. In captivity, calves were
+            routinely separated and transferred between facilities. The acoustic
+            bonds that define orca society cannot be recreated in concrete.
+          </p>
+          <div class="pq rv d3">
+            "You could hear the whales screaming to each other, back and forth
+            across the water. I can still hear it sometimes."
+            <cite>— Eyewitness to the 1976 Budd Inlet capture</cite>
+          </div>
+        </div>
+
+        <div class="rv d2">
+          <p style="font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--cyan); margin-bottom:1.4rem;">
+            Lifespan — Wild vs. Captivity
+          </p>
+          <!-- Bars animate via scroll.js when section enters view -->
+          <div class="lbars" id="lbars">
+            <div class="lbar">
+              <div class="lbar-lbl"><span>Wild female</span><span>up to 90 yrs</span></div>
+              <div class="lbar-tr"><div class="lbar-fi" data-w="100"></div></div>
+            </div>
+            <div class="lbar">
+              <div class="lbar-lbl"><span>Wild male</span><span>up to 60 yrs</span></div>
+              <div class="lbar-tr"><div class="lbar-fi" data-w="67"></div></div>
+            </div>
+            <div class="lbar">
+              <div class="lbar-lbl"><span>Captive — median</span><span>11–13 yrs</span></div>
+              <div class="lbar-tr"><div class="lbar-fi cap" data-w="14"></div></div>
+            </div>
+            <div class="lbar">
+              <div class="lbar-lbl"><span>Tilikum</span><span>34 yrs (died 2017)</span></div>
+              <div class="lbar-tr"><div class="lbar-fi cap" data-w="38"></div></div>
+            </div>
+          </div>
+          <p class="body" style="margin-top:1.8rem; font-size:.72rem;">
+            At least <strong style="color:var(--white); font-weight:400">184 orcas</strong>
+            have died in captivity worldwide — not including 30 stillborn calves.
+            At least <strong style="color:var(--white); font-weight:400">46</strong>
+            at SeaWorld alone.
+          </p>
+          <div class="stats" style="margin-top:1.8rem;">
+            <div>
+              <span class="stat-n">184</span>
+              <span class="stat-l">Deaths in captivity worldwide</span>
+            </div>
+            <div>
+              <span class="stat-n">55</span>
+              <span class="stat-l">Orcas currently held captive globally</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ S4: GRIEF ══ -->
+    <section class="sec" id="s4">
+      <div class="sec-in">
+
+        <p class="eyebrow rv">Chapter Four</p>
+        <div class="rule rv d1"></div>
+        <h2 class="rv d1">J35 — <em>Tahlequah</em></h2>
+        <p class="lead rv d2">
+          Born 1998. J17 matriline. She has carried grief twice — through
+          waters her ancestors knew before captivity took half her community.
+        </p>
+
+        <div class="diptych rv d2">
+          <div class="dp">
+            <span class="dp-yr">2018</span>
+            <p class="dp-tx">
+              Tahlequah's calf was born July 24th and survived thirty minutes.
+              She carried the body for
+              <strong style="color:var(--white); font-weight:400">17 days</strong>
+              across more than
+              <strong style="color:var(--white); font-weight:400">1,000 miles</strong>
+              of the Salish Sea — a journey researchers documented as epimeletic
+              behavior: grief given form in motion. Her family followed alongside
+              the entire time.
+            </p>
+          </div>
+          <div class="dp">
+            <span class="dp-yr">2024</span>
+            <p class="dp-tx">
+              On December 20, 2024, Tahlequah gave birth to J61 — a female calf.
+              Identified Christmas Eve. Confirmed dead New Year's Eve. Tahlequah
+              was observed carrying the body for at least
+              <strong style="color:var(--white); font-weight:400">11 days</strong>.
+              The second time. The same mother. The same ocean. Six years apart.
+            </p>
+          </div>
+        </div>
+
+        <!-- Journey path — animates via scroll.js -->
+        <div class="jmap rv d3">
+          <svg viewBox="0 0 700 180" fill="none">
+            <defs>
+              <filter id="gw">
+                <feGaussianBlur stdDeviation="3" result="b"/>
+                <feMerge>
+                  <feMergeNode in="b"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <linearGradient id="pg" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%"   stop-color="var(--cyan)"/>
+                <stop offset="100%" stop-color="rgba(0,255,231,0.2)"/>
+              </linearGradient>
+            </defs>
+            <!-- Seabed suggestion -->
+            <path d="M0 148 Q175 132 350 144 Q525 156 700 135"
+              stroke="rgba(0,255,231,.06)" stroke-width="1" fill="none"/>
+            <!-- Ghost path (faint dashed guide) -->
+            <path d="M55 75 C100 55,145 98,190 72 C235 46,260 88,305 65 C350 42,385 80,425 60 C465 40,500 76,545 55 C585 36,618 70,648 50"
+              stroke="rgba(0,255,231,.12)" stroke-width="1.5" stroke-dasharray="5 5" fill="none"/>
+            <!-- Animated path — scroll.js drives strokeDashoffset -->
+            <path id="jp"
+              d="M55 75 C100 55,145 98,190 72 C235 46,260 88,305 65 C350 42,385 80,425 60 C465 40,500 76,545 55 C585 36,618 70,648 50"
+              stroke="url(#pg)" stroke-width="1.8" fill="none" filter="url(#gw)"
+              stroke-dasharray="1200" stroke-dashoffset="1200"/>
+            <circle cx="55"  cy="75" r="5" fill="var(--cyan)" filter="url(#gw)"/>
+            <circle cx="648" cy="50" r="4" fill="none" stroke="var(--cyan-dim)" stroke-width="1.2"/>
+            <text x="351" y="112" fill="rgba(0,255,231,.35)"
+              font-size="9" font-family="Playfair Display,serif"
+              text-anchor="middle" font-style="italic">
+              1,000+ miles  ·  17 days  ·  carrying her calf
+            </text>
+          </svg>
+        </div>
+
+        <div class="jstats rv d3">
+          <div style="text-align:center">
+            <span class="stat-n">30<small style="font-size:.4em">min</small></span>
+            <span class="stat-l">How long the 2018 calf survived</span>
+          </div>
+          <div style="text-align:center">
+            <span class="stat-n">17</span>
+            <span class="stat-l">Days carrying her body, 2018</span>
+          </div>
+          <div style="text-align:center">
+            <span class="stat-n">11</span>
+            <span class="stat-l">Days carrying J61, December 2024</span>
+          </div>
+        </div>
+
+        <div class="pq rv d4" style="margin:2.5rem auto; text-align:left;">
+          Grief exists beyond human language. She moved through the same water
+          her family had always moved through — but now it held something more:
+          the weight of what could not be saved, and the refusal to let go.
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ S5: TODAY ══ -->
+    <section class="sec" id="s5">
+      <div class="sec-in">
+
+        <div>
+          <p class="eyebrow rv">Chapter Five</p>
+          <div class="rule rv d1"></div>
+          <h2 class="rv d1">
+            Seventy-four remain.<br><em>K pod is fading.</em>
+          </h2>
+          <p class="lead rv d2">
+            The 2025 census recorded 74 Southern Residents across three pods.
+            The number hovers near this low for years — births consistently
+            failing to outpace deaths, calves dying within weeks of being born.
+          </p>
+
+          <!-- Pod rings — scroll.js animates strokeDashoffset -->
+          <div class="pods rv d2">
+            <div class="pod-c">
+              <svg width="86" height="86" viewBox="0 0 86 86">
+                <circle cx="43" cy="43" r="37" stroke="rgba(0,255,231,.1)" stroke-width="1" fill="none"/>
+                <circle id="jr" cx="43" cy="43" r="37"
+                  stroke="var(--cyan)" stroke-width="1.5" fill="none"
+                  stroke-dasharray="232" stroke-dashoffset="232"
+                  transform="rotate(-90 43 43)"
+                  style="filter:drop-shadow(0 0 6px var(--cyan))"/>
+              </svg>
+              <span class="pod-cn">27</span>
+              <span class="pod-nm">J Pod</span>
+            </div>
+            <div class="pod-c">
+              <svg width="66" height="66" viewBox="0 0 66 66">
+                <circle cx="33" cy="33" r="29" stroke="rgba(0,255,231,.08)" stroke-width="1" fill="none"/>
+                <circle id="kr" cx="33" cy="33" r="29"
+                  stroke="rgba(220,60,60,.7)" stroke-width="1.5" fill="none"
+                  stroke-dasharray="182" stroke-dashoffset="182"
+                  transform="rotate(-90 33 33)"/>
+              </svg>
+              <span class="pod-cn" style="color:rgba(220,100,100,.9)">14</span>
+              <span class="pod-nm">K Pod</span>
+            </div>
+            <div class="pod-c">
+              <svg width="96" height="96" viewBox="0 0 96 96">
+                <circle cx="48" cy="48" r="43" stroke="rgba(0,255,231,.08)" stroke-width="1" fill="none"/>
+                <circle id="lr" cx="48" cy="48" r="43"
+                  stroke="var(--cyan)" stroke-width="1.5" fill="none"
+                  stroke-dasharray="270" stroke-dashoffset="270"
+                  transform="rotate(-90 48 48)"
+                  style="filter:drop-shadow(0 0 6px var(--cyan))"/>
+              </svg>
+              <span class="pod-cn">33</span>
+              <span class="pod-nm">L Pod</span>
+            </div>
+          </div>
+
+          <p class="body rv d3" style="font-size:.75rem;">
+            K pod: lowest count since surveys began. Highest likelihood of
+            extinction within 50 years. There are calls K pod makes that no
+            other group makes — calls that will vanish with them.
+          </p>
+        </div>
+
+        <div>
+          <p class="eyebrow rv" style="margin-top:0">Threats today</p>
+          <ul class="threats rv d1">
+            <li>
+              <span class="ic">◌</span>
+              <span>
+                <strong style="color:var(--white); font-weight:400">Salmon depletion —</strong>
+                Southern Residents eat almost exclusively Chinook. As salmon runs collapse,
+                mothers cannot nurse calves on insufficient calories. Nutritional stress
+                directly impairs reproduction.
+              </span>
+            </li>
+            <li>
+              <span class="ic">◌</span>
+              <span>
+                <strong style="color:var(--white); font-weight:400">Vessel noise —</strong>
+                Boat traffic masks the acoustic signals used to hunt and communicate.
+                In a species whose entire social structure is built on sound, noise is
+                severance — a mother cannot locate her calf.
+              </span>
+            </li>
+            <li>
+              <span class="ic">◌</span>
+              <span>
+                <strong style="color:var(--white); font-weight:400">Toxic contaminants —</strong>
+                PCBs concentrate in orca fat and pass through mothers' milk to calves.
+                They suppress immune systems and cause stillbirths.
+              </span>
+            </li>
+            <li>
+              <span class="ic">◌</span>
+              <span>
+                <strong style="color:var(--white); font-weight:400">The demographic legacy of capture —</strong>
+                The 48 removed weren't replaceable. Pods carry cultural knowledge:
+                dialects, feeding grounds, remembered routes. What was taken was
+                also accumulated wisdom.
+              </span>
+            </li>
+          </ul>
+          <div class="ocean-box rv d2">
+            <p>
+              On November 4, 2024, L Pod returned to Penn Cove for the first time
+              in 50 years. They had avoided the site — and taught each subsequent
+              generation to avoid it.
+              <strong style="color:var(--white); font-weight:400">L25 "Ocean Sun,"</strong>
+              the oldest surviving Southern Resident and the only member alive during
+              the 1970 captures, entered the cove that day. The last witness returned
+              to the place of the wound.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ S6: FORWARD ══ -->
+    <section class="sec" id="s6">
+      <div class="sec-in">
+
+        <p class="eyebrow rv">Coda</p>
+        <div class="rule rv d1"></div>
+        <h2 class="rv d1">
+          The living carry<br>the dead <em>forward</em>
+        </h2>
+        <p class="lead rv d2">
+          Tahlequah's matriline continues. J pod has 27 members. The census is
+          conducted every year — which means people are still counting, still
+          watching, still refusing to look away. The act of witness is itself
+          a form of care.
+        </p>
+
+        <div class="ocean-sun rv d3">
+          <strong>L25 — Ocean Sun</strong><br>
+          Estimated born 1928. The oldest Southern Resident.<br>
+          She was alive when they came for her pod in 1970.<br>
+          She returned to Penn Cove in November 2024.<br>
+          She is still swimming.
+        </div>
+
+        <p class="body rv d3" style="margin:0 auto; text-align:center; max-width:520px;">
+          Grief in a species this social is not private. When Tahlequah swam
+          with her dead calf, her family followed alongside. The matriline holds
+          what the individual cannot. The living carry the dead forward.
+        </p>
+
+        <div class="ctarow rv d4">
+          <a href="https://www.whaleresearch.com/" target="_blank" class="cta">Center for Whale Research</a>
+          <a href="https://us.whales.org/"         target="_blank" class="cta s">WDC — Whales & Dolphins</a>
+          <a href="https://www.orcanetwork.org/"   target="_blank" class="cta s">Orca Network</a>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Data: Center for Whale Research 2025 Annual Census ·
+        <a href="https://www.opb.org/article/2026/03/27/washington-last-orca-capture-50-years-later/">
+          OPB: Last Orca Capture 50 Years Later
+        </a> ·
+        Whale &amp; Dolphin Conservation USA
+      </p>
+      <p style="margin-top:.8rem;">
+        An information design project about memory, grief, and the matrilineal
+        bonds of <em>Orcinus orca</em>.
+      </p>
+    </footer>
+
+  </div><!-- /story -->
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS
+       Load order matters:
+       1. Three.js library (external CDN)
+       2. whale.js  — sets up Three.js scene, exposes setScrollProgress()
+       3. scroll.js — calls setScrollProgress() on scroll
+       4. viz.js    — cursor, dive, family tree, dot grid, count-up
+  ════════════════════════════════════════ -->
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script src="js/whale.js"></script>
+<script src="js/scroll.js"></script>
+<script src="js/viz.js"></script>
+
+</body>
+</html>
