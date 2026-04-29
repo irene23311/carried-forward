@@ -30,6 +30,8 @@
 
 /* ─────────────────────────────────────────
    DIVE INTRO TRANSITION
+   CHANGED: added cinematic-active lock +
+   diveComplete event after ocean fades
 ───────────────────────────────────────── */
 (function initIntro() {
   const button = document.getElementById('enter-btn');
@@ -54,10 +56,11 @@
       setTimeout(() => flash.classList.remove('on'), 1400);
     }
 
-    // 4. After flash: hide intro, show story
+    // 4. After flash: hide intro, show story — but keep scroll locked
     setTimeout(() => {
       if (intro) intro.classList.add('gone');
       document.body.classList.remove('intro-active');
+      document.body.classList.add('cinematic-active'); // 👈 NEW: lock scroll
       if (story) story.classList.add('on');
       if (nav)   nav.classList.add('on');
     }, 700);
@@ -70,11 +73,40 @@
       }
     }, 1500);
 
+    // 6. NEW: fire diveComplete after ocean finishes fading (~1.8s)
+    //    whale-glb.js listens for this to start the GLB cinematic
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('diveComplete'));
+    }, 1800);
+
     if (window.onScroll) window.onScroll();
   }
 
   button.addEventListener('click', beginDive);
 })();
+
+
+/* ─────────────────────────────────────────
+   NEW: CINEMATIC DONE HANDLER
+   When whale-glb.js finishes the zoom-out,
+   unlock scroll and reveal S1 content
+───────────────────────────────────────── */
+window.addEventListener('orcaCinematicDone', function () {
+  // Re-enable scrolling
+  document.body.classList.remove('cinematic-active');
+
+  // Reveal S1 content (removes the CSS hold)
+  const s1 = document.getElementById('s1');
+  if (s1) s1.classList.remove('cinematic-hold');
+
+  // Trigger reveal pass since user hasn't scrolled yet
+  if (window.onScroll) window.onScroll();
+
+  // Tiny nudge so user knows page is scrollable
+  setTimeout(() => {
+    window.scrollBy({ top: 2, behavior: 'smooth' });
+  }, 600);
+});
 
 
 /* ─────────────────────────────────────────
