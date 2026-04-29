@@ -2,3 +2,4 @@ assets/models/node_modules/
 assets/models/
 .env
 .env.local
+.DS_Store
