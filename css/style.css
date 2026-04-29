@@ -3,7 +3,7 @@
    Carried Forward: The Memory of Whales
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@200;300;400;500;600;700;800;900&display=swap');
 
 /* ── Color & design tokens ── */
 :root {
@@ -131,12 +131,13 @@ body:not(.intro-active) #intro {
 .i-sub {
   font-size: .92rem;
   line-height: 1.9;
-  color: var(--muted);
+  color: var(--white);
   max-width: 28rem;
 }
 .i-btn {
   margin-top: 2.2rem;
   font-size: .65rem;
+  font-weight: 600;
   letter-spacing: .34em;
   text-transform: uppercase;
   color: var(--cyan);

@@ -86,6 +86,71 @@ body.cinematic-active {
 /* Family tree container */
 .ftree { position: relative; height: 330px; }
 .ftree svg { width: 100%; height: 100%; overflow: visible; }
+.ftree-node { cursor: pointer; outline: none; }
+.ftree-node circle,
+.ftree-node text {
+  transition: transform .22s ease, opacity .22s ease, fill .22s ease, stroke .22s ease;
+}
+.ftree-node:hover circle,
+.ftree-node:focus circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.18);
+  stroke: var(--cyan);
+  stroke-width: 1.8;
+}
+.ftree-node:hover text,
+.ftree-node:focus text {
+  fill: rgba(240,250,250,.96);
+}
+.ftree-tip {
+  position: absolute;
+  width: min(210px, calc(100% - 1.5rem));
+  padding: .9rem 1rem 1rem;
+  border: 1px solid rgba(0,255,231,.24);
+  background:
+    linear-gradient(180deg, rgba(3,16,18,.96) 0%, rgba(2,7,10,.96) 100%);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.38),
+    0 0 24px rgba(0,255,231,.08);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 3;
+}
+.ftree-tip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.ftree-tip-id {
+  display: inline-block;
+  margin-bottom: .4rem;
+  font-size: .56rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.ftree-tip h3 {
+  margin-bottom: .35rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--white);
+}
+.ftree-tip p {
+  margin: 0;
+  font-size: .68rem;
+  line-height: 1.7;
+  color: rgba(240,250,250,.82);
+}
+.ftree-tip-meta {
+  margin-bottom: .45rem !important;
+  color: rgba(0,255,231,.72) !important;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 
 /* ════════════════════════════════════════
    SECTION 2 — Rupture
@@ -242,6 +307,7 @@ body.cinematic-active {
 /* Journey map */
 .jmap { width: 100%; height: 220px; margin: 2.5rem 0; }
 .jmap svg { width: 100%; height: 100%; }
+.jmap-caption { font-size: 18px;font-weight: 600; }
 
 /* Journey stats row */
 .jstats { display: flex; justify-content: center; gap: 4rem; margin: 1.5rem 0; }
