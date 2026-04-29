@@ -60,7 +60,7 @@
     setTimeout(() => {
       if (intro) intro.classList.add('gone');
       document.body.classList.remove('intro-active');
-      document.body.classList.add('cinematic-active'); // 👈 NEW: lock scroll
+      
       if (story) story.classList.add('on');
       if (nav)   nav.classList.add('on');
     }, 700);

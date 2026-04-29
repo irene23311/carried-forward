@@ -1,37 +1,71 @@
 /* ============================================================
-   whale-glb.js — GLB orca cinematic for Chapter 1
+   whale-glb.js — Scroll-driven GLB orca for Chapter 1
    Carried Forward: The Memory of Whales
+
+   SCROLL MAP (progress = window.scrollY / maxScroll):
+     0.00 – 0.08  : whale fades in, slow spin
+     0.08 – 0.22  : zoom IN to close-up
+     0.22 – 0.38  : zoom OUT, drift to bottom-right corner
+     0.38+        : canvas removed, S1 content revealed
+
+   S1 content is hidden (cinematic-hold) until scroll > 0.32,
+   at which point it starts fading in while the whale drifts out.
    ============================================================ */
 
 (function () {
 
-  /* Fallback safety: if something goes wrong, unlock page after 15s */
-  var fallbackTimer = setTimeout(function () {
-    cleanup();
-    fireDone();
-  }, 15000);
+  /* ── Safety fallback: if user never scrolls, unlock after 30s ── */
+  var fallbackTimer = setTimeout(unlock, 30000);
 
-  function cleanup() {
+  function unlock() {
+    clearTimeout(fallbackTimer);
     document.body.classList.remove('cinematic-active');
     var s1 = document.getElementById('s1');
     if (s1) s1.classList.remove('cinematic-hold');
-    var c = document.getElementById('glb-canvas');
-    if (c && c.parentNode) c.parentNode.removeChild(c);
+    if (window.onScroll) window.onScroll();
   }
 
-  function fireDone() {
-    clearTimeout(fallbackTimer);
-    window.dispatchEvent(new CustomEvent('orcaCinematicDone'));
-  }
+  /* ── State ── */
+  var glbCanvas   = null;
+  var renderer    = null;
+  var scene       = null;
+  var cam         = null;
+  var model       = null;
+  var raf         = null;
+  var removed     = false;
+  var contentShown = false;
 
-  /* Wait for dive button click */
+  /* Camera anchor positions */
+  var POS = {
+    start:  { x: 0,   y: 0.8,  z: 7.0 },   // whale first appears
+    close:  { x: 0,   y: 0.2,  z: 3.8 },   // zoomed in
+    corner: { x: 2.8, y: -1.2, z: 7.0 },   // bottom-right, whale small
+  };
+
+  /* Scroll breakpoints */
+  var BP = {
+    fadeInStart:  0.00,
+    fadeInEnd:    0.04,
+    zoomInEnd:    0.09,
+    zoomOutEnd:   0.13,
+    fadeOutEnd:   0.16,   
+    contentShow:  0.17,   
+    removeAt:     0.18,   // canvas removed from DOM
+  };
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(t, lo, hi) { return Math.max(lo, Math.min(hi, t)); }
+  function invlerp(a, b, v) { return clamp((v - a) / (b - a), 0, 1); }
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  /* ── Wait for dive button ── */
   window.addEventListener('diveComplete', init);
 
   function init() {
 
-    /* ── CREATE CANVAS ── */
-    var glbCanvas = document.createElement('canvas');
-    glbCanvas.id  = 'glb-canvas';
+    /* Create canvas */
+    glbCanvas = document.createElement('canvas');
+    glbCanvas.id = 'glb-canvas';
     Object.assign(glbCanvas.style, {
       position:      'fixed',
       top:           '0',
@@ -41,62 +75,56 @@
       zIndex:        '15',
       pointerEvents: 'none',
       opacity:       '0',
-      transition:    'opacity 1s ease',
       background:    'transparent',
     });
     document.body.appendChild(glbCanvas);
 
-    /* ── RENDERER ── */
-    var renderer = new THREE.WebGLRenderer({ canvas: glbCanvas, antialias: true, alpha: true });
+    /* Renderer */
+    renderer = new THREE.WebGLRenderer({ canvas: glbCanvas, antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
 
-    /* ── SCENE + CAMERA ── */
-    var scene = new THREE.Scene();
-    var cam   = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 200);
-    cam.position.set(0, 0.8, 7);
+    /* Scene + camera */
+    scene = new THREE.Scene();
+    cam   = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 200);
+    cam.position.set(POS.start.x, POS.start.y, POS.start.z);
     cam.lookAt(0, 0, 0);
 
-    /* ── LIGHTING ── */
+    /* Lighting */
     scene.add(new THREE.AmbientLight(0x001830, 2.0));
+    var key = new THREE.PointLight(0x00ffe7, 3.5, 40);
+    key.position.set(2, 5, 6);
+    scene.add(key);
+    var fill = new THREE.PointLight(0x003366, 1.2, 30);
+    fill.position.set(-3, -3, 4);
+    scene.add(fill);
+    var rim = new THREE.DirectionalLight(0x00c8b0, 0.6);
+    rim.position.set(0, 2, -8);
+    scene.add(rim);
 
-    var keyLight = new THREE.PointLight(0x00ffe7, 3.5, 40);
-    keyLight.position.set(2, 5, 6);
-    scene.add(keyLight);
+    /* Slow rotation accumulator */
+    var rotY = 0;
+    var lastTime = null;
 
-    var fillLight = new THREE.PointLight(0x003366, 1.2, 30);
-    fillLight.position.set(-3, -3, 4);
-    scene.add(fillLight);
-
-    var rimLight = new THREE.DirectionalLight(0x00c8b0, 0.6);
-    rimLight.position.set(0, 2, -8);
-    scene.add(rimLight);
-
-    /* ── CHECK LOADER ── */
+    /* Load GLB */
     if (!THREE.GLTFLoader) {
-      console.warn('whale-glb.js: GLTFLoader missing');
-      cleanup();
-      fireDone();
-      return;
+      console.warn('GLTFLoader not found');
+      unlock(); return;
     }
 
-    /* ── LOAD GLB ── */
-    var loader = new THREE.GLTFLoader();
-
-    loader.load(
+    new THREE.GLTFLoader().load(
       'assets/models/orca-compressed.glb',
 
-      function onLoad(gltf) {
-        var model = gltf.scene;
+      function (gltf) {
+        model = gltf.scene;
 
-        /* Center and scale */
+        /* Center + normalize */
         var box    = new THREE.Box3().setFromObject(model);
         var center = box.getCenter(new THREE.Vector3());
         var size   = box.getSize(new THREE.Vector3());
-        var maxDim = Math.max(size.x, size.y, size.z);
         model.position.sub(center);
-        model.scale.setScalar(2.8 / maxDim);
+        model.scale.setScalar(2.8 / Math.max(size.x, size.y, size.z));
 
         /* Slight cyan tint */
         model.traverse(function (child) {
@@ -108,109 +136,99 @@
 
         scene.add(model);
 
-        /* Fade canvas in */
-        requestAnimationFrame(function () {
-          glbCanvas.style.opacity = '1';
-        });
+        /* Start render loop */
+        (function loop(ts) {
+          raf = requestAnimationFrame(loop);
 
-        runCinematic(model);
+          /* Delta time for smooth rotation regardless of fps */
+          var dt = lastTime ? Math.min((ts - lastTime) / 1000, 0.05) : 0.016;
+          lastTime = ts;
+          rotY += dt * 0.5; // 0.5 rad/s continuous spin
+
+          updateFromScroll(rotY);
+          renderer.render(scene, cam);
+        })(0);
       },
 
-      function onProgress(xhr) {
+      function (xhr) {
         if (xhr.lengthComputable)
           console.log('GLB: ' + Math.round(xhr.loaded / xhr.total * 100) + '%');
       },
 
-      function onError(err) {
-        console.error('GLB load failed:', err);
-        cleanup();
-        fireDone();
+      function (err) {
+        console.error('GLB failed:', err);
+        unlock();
       }
     );
 
-    /* ── RESIZE ── */
     window.addEventListener('resize', function () {
       cam.aspect = window.innerWidth / window.innerHeight;
       cam.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    /* ════════════════════════════════════════
-       CINEMATIC SEQUENCER
-       Phase 1 (0-3.2s):   zoom IN toward whale
-       Phase 2 (3.2-6s):   slow 360 spin closeup
-       Phase 3 (6-8.2s):   zoom OUT + drift to corner
-       Phase 4 (8.2-9.4s): fade canvas out
-       ════════════════════════════════════════ */
-    function runCinematic(model) {
-
-      var startTime = null;
-      var doneFired = false;
-
-      var T = {
-        zoomInEnd:  3.2,
-        spinEnd:    6.0,
-        zoomOutEnd: 8.2,
-        fadeEnd:    9.4,
-      };
-
-      var posStart  = new THREE.Vector3(0,   0.8,  7.0);
-      var posClose  = new THREE.Vector3(0,   0.2,  3.8);
-      var posCorner = new THREE.Vector3(2.4, -1.0, 6.5);
-
-      function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-      function clamp(t) { return Math.max(0, Math.min(1, t)); }
-
-      function tick(timestamp) {
-        if (!startTime) startTime = timestamp;
-        var e = (timestamp - startTime) / 1000;
-
-        model.rotation.y += 0.4 / 60;
-
-        if (e < T.zoomInEnd) {
-          var p = ease(clamp(e / T.zoomInEnd));
-          cam.position.lerpVectors(posStart, posClose, p);
-
-        } else if (e < T.spinEnd) {
-          var p    = clamp((e - T.zoomInEnd) / (T.spinEnd - T.zoomInEnd));
-          var sway = Math.sin(p * Math.PI * 2) * 0.18;
-          cam.position.copy(posClose);
-          cam.position.y += sway;
-          cam.position.x += Math.sin(p * Math.PI) * 0.25;
-
-        } else if (e < T.zoomOutEnd) {
-          var p = ease(clamp((e - T.spinEnd) / (T.zoomOutEnd - T.spinEnd)));
-          cam.position.lerpVectors(posClose, posCorner, p);
-          model.position.x = THREE.MathUtils.lerp(0,  0.5, p);
-          model.position.y = THREE.MathUtils.lerp(0, -0.3, p);
-
-          /* Fire done at 70% so S1 text starts appearing while whale drifts */
-          if (p > 0.7 && !doneFired) {
-            doneFired = true;
-            fireDone();
-          }
-
-        } else if (e < T.fadeEnd) {
-          var p = clamp((e - T.zoomOutEnd) / (T.fadeEnd - T.zoomOutEnd));
-          glbCanvas.style.opacity = String(1 - p);
-
-        } else {
-          /* Done — remove canvas */
-          glbCanvas.style.opacity = '0';
-          setTimeout(function () {
-            if (glbCanvas.parentNode) glbCanvas.parentNode.removeChild(glbCanvas);
-          }, 400);
-          return;
-        }
-
-        cam.lookAt(0, 0, 0);
-        renderer.render(scene, cam);
-        requestAnimationFrame(tick);
-      }
-
-      requestAnimationFrame(tick);
-    }
-
   }
+
+  /* ════════════════════════════════════════
+     SCROLL-DRIVEN UPDATE
+     Called every frame from the render loop.
+     Reads current scroll progress and sets
+     camera position + canvas opacity.
+     ════════════════════════════════════════ */
+  function updateFromScroll(rotY) {
+  if (!model) return;
+
+  var scrollTop = window.scrollY;
+  var maxScroll = document.body.scrollHeight - window.innerHeight;
+  var s = maxScroll > 0 ? scrollTop / maxScroll : 0;
+
+  /* ── Canvas opacity: fade in, hold, fade out ── */
+  var opacity;
+  if (s < BP.fadeInEnd) {
+    opacity = invlerp(BP.fadeInStart, BP.fadeInEnd, s);
+  } else if (s < BP.zoomOutEnd) {
+    opacity = 1;
+  } else if (s < BP.fadeOutEnd) {
+    opacity = 1 - invlerp(BP.zoomOutEnd, BP.fadeOutEnd, s);
+  } else {
+    opacity = 0;
+  }
+  glbCanvas.style.opacity = String(clamp(opacity, 0, 1));
+
+  /* ── Camera position ── */
+  if (s < BP.zoomInEnd) {
+    var p = ease(invlerp(BP.fadeInStart, BP.zoomInEnd, s));
+    cam.position.set(
+      lerp(POS.start.x, POS.close.x, p),
+      lerp(POS.start.y, POS.close.y, p),
+      lerp(POS.start.z, POS.close.z, p)
+    );
+    model.position.x = 0;
+    model.position.y = 0;
+
+  } else if (s < BP.zoomOutEnd) {
+    var p = ease(invlerp(BP.zoomInEnd, BP.zoomOutEnd, s));
+    cam.position.set(
+      lerp(POS.close.x, POS.corner.x, p),
+      lerp(POS.close.y, POS.corner.y, p),
+      lerp(POS.close.z, POS.corner.z, p)
+    );
+    model.position.x = lerp(0, 0.6, p);
+    model.position.y = lerp(0, -0.4, p);
+  }
+
+  /* ── Continuous rotation ── */
+  model.rotation.y = rotY;
+  cam.lookAt(0, 0, 0);
+
+  /* ── S1 content: show when scrolled past whale, hide when back ── */
+  var s1 = document.getElementById('s1');
+  if (s >= BP.contentShow) {
+    if (s1) s1.classList.remove('cinematic-hold');
+    document.body.classList.remove('cinematic-active');
+    if (window.onScroll) window.onScroll();
+  } else {
+    if (s1) s1.classList.add('cinematic-hold');
+  }
+}
 
 })();

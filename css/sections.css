@@ -38,6 +38,11 @@
    SECTION 1 — Family
    ════════════════════════════════════════ */
    /* S1 content starts invisible and locked */
+
+    #whale-stage {
+  height: 300vh; 
+  pointer-events: none;}
+
 #s1.cinematic-hold .sec-in {
   opacity: 0;
   transform: translateY(24px);
@@ -53,9 +58,7 @@
   pointer-events: auto;
 }
  
-/* Prevent scrolling during cinematic */
 body.cinematic-active {
-  overflow: hidden;
 }
  
 /* GLB canvas corner position hint
