@@ -37,38 +37,6 @@
 /* ════════════════════════════════════════
    SECTION 1 — Family
    ════════════════════════════════════════ */
-   /* S1 content starts invisible and locked */
-
-    #whale-stage {
-  height: 230vh; 
-  pointer-events: none;}
-
-#s1.cinematic-hold .sec-in {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 1.1s ease 0.2s, transform 1.1s ease 0.2s;
-  pointer-events: none;
-}
- 
-/* When JS removes cinematic-hold, content fades in */
-#s1 .sec-in {
-  opacity: 1;
-  transform: none;
-  transition: opacity 1.1s ease 0.2s, transform 1.1s ease 0.2s;
-  pointer-events: auto;
-}
- 
-body.cinematic-active {
-}
- 
-/* GLB canvas corner position hint
-   (actual positioning is done in JS via cam,
-   but this clips overflow cleanly) */
-#glb-canvas {
-  pointer-events: none;
-}
- 
-
 #s1 .sec-in {
   display: grid;
   grid-template-columns: 1fr 1fr;

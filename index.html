@@ -18,22 +18,35 @@
   <!-- ── Progress bar ── -->
   <div id="prog"></div>
 
-  <!-- ── Three.js canvas (whale lives here) ── -->
+  <!-- ── Three.js ocean canvas ── -->
   <canvas id="tc"></canvas>
 
-  <!-- ── Intro screen ── -->
-  <div id="intro">
-    <div class="intro-copy">
-      <h1 class="i-title">Carried<br><em>Forward</em></h1>
-      <div class="i-rule"></div>
-      <p class="i-sub">
-        The matrilineal bonds of orca families, the grief of Tahlequah,
-        and what captivity took from the Southern Residents.
-      </p>
-      <button class="i-btn" id="enter-btn" type="button">Enter</button>
-    </div>
-  </div>
 
+  <!-- ── Intro screen ── -->
+ <!-- Flash overlay for dive transition -->
+<div id="flash"></div>
+ 
+<!-- Intro — title only, orca is the enter button -->
+<div id="intro">
+  <div class="intro-copy">
+    <h1 class="i-title">Carried<br><em>Forward</em></h1>
+    <div class="i-rule"></div>
+    <p class="i-sub">
+      The matrilineal bonds of orca families, the grief of Tahlequah,
+      and what captivity took from the Southern Residents.
+    </p>
+  </div>
+</div>
+ 
+<!-- Explore hint bottom of screen -->
+<div id="explore-hint">
+  <span class="eh-key">W A S D</span> to swim &nbsp;·&nbsp;
+  <span class="eh-key">drag</span> to look &nbsp;·&nbsp;
+  <span class="eh-key">Q / E</span> to dive &amp; rise
+</div>
+ 
+<!-- Whale hover hint -->
+<div id="whale-hint">Click to enter the story</div>
   <!-- ── Nav ── -->
   <nav id="nav">
     <a href="#" class="n-logo">Carried Forward</a>
@@ -51,10 +64,8 @@
        STORY
   ════════════════════════════════════════ -->
   <div id="story">
-    <!-- ══ WHALE STAGE — scroll space for the GLB cinematic ══ -->
-    <section id="whale-stage"></section>
     <!-- ══ S1: FAMILY ══ -->
-    <section class="sec cinematic-hold" id="s1">
+    <section class="sec" id="s1">
       <div class="sec-in">
 
         <div>
@@ -188,7 +199,6 @@
 
       </div>
     </section>
-    <section id="whale-stage"></section>
     <!-- ══ S3: ENCLOSURE ══ -->
     <section class="sec" id="s3">
       <div class="sec-in">
@@ -535,24 +545,18 @@
   <!-- ═══════════════════════════════════════
        SCRIPTS
        Load order matters:
-       1. Three.js library (external CDN)
-       2. whale.js  — sets up Three.js scene, exposes setScrollProgress()
-       3. scroll.js — calls setScrollProgress() on scroll
-       4. viz.js    — cursor, dive, family tree, dot grid, count-up
+       1. scroll.js — scroll reveals, nav state, progress bar
+       2. viz.js    — cursor, intro, family tree, dot grid, count-up
   ════════════════════════════════════════ -->
-  <script>
-  // Force page to top on every load — prevents browser scroll restoration
+<script>
   history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-
-
 <script src="js/whale.js"></script>
-
-<script src="js/scroll.js"></script>
 <script src="js/whale-glb.js"></script>
+<script src="js/scroll.js"></script>
 <script src="js/viz.js"></script>
 
 </body>

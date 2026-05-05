@@ -4,7 +4,7 @@
 
    HOW IT WORKS:
    - Listens to window scroll events
-   - Calculates 0–1 progress and sends it to whale.js
+   - Calculates 0–1 progress for the page
    - Triggers .rv reveals, timeline stagger, bar/ring animations
    - Updates nav active state
    ============================================================ */
@@ -16,7 +16,6 @@ function onScroll() {
   const maxScroll = document.body.scrollHeight - innerHeight;
   const progress  = scrollTop / maxScroll;
 
-  // Send to whale.js (defined in whale.js as window.setScrollProgress)
   if (window.setScrollProgress) window.setScrollProgress(progress);
 
   // Update progress bar
